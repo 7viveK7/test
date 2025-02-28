@@ -2,43 +2,31 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BasicTable from "./table";
 import CustomizedDialogs from "./editModal";
-import { setcurrentData, updateData } from "./slice";
+import {  deleteData, fetchPosts, updateData, } from "./slice";
 
-// Define styles as a constant
 const styles = {
-  container: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-};
+    container: {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  };
 
 const Home = () => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState({});
-  const currentData = useSelector((state) => state.counter.data);
+  const { data, loading, error } = useSelector((state) => state.counter);
   const dispatch = useDispatch();
 
-  // Fetch data on mount
   useEffect(() => {
-    if (!currentData.length) {
-      fetch("https://jsonplaceholder.typicode.com/posts")
-        .then((response) => response.json())
-        .then((data) => {
-          const evenNum = data.filter((item) => item.id % 2 === 0);
-          dispatch(setcurrentData(evenNum));
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }
-  }, [currentData.length, dispatch]);
+    dispatch(fetchPosts());
+  }, [dispatch]);
 
-  
   const handleDeleteRow = (id) => {
-    const newData = currentData.filter((item) => item.id !== id);
-    dispatch(setcurrentData(newData));
+    dispatch(deleteData(id));
   };
 
   const handleEditRow = (item) => {
@@ -51,10 +39,13 @@ const Home = () => {
     setOpen(false);
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
   return (
     <div style={styles.container}>
       <BasicTable
-        data={currentData}
+        data={data}
         deleteRow={handleDeleteRow}
         editRow={handleEditRow}
       />
