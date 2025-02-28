@@ -1,25 +1,42 @@
-// import { useState } from 'react'
-import { useState } from 'react'
-import './App.css'
-import Home from './hom'
-import ButtonUsage from './toggleButton'
-import { Provider } from 'react-redux'
-import { store } from './store'
+import { useState } from 'react';
+import { Provider } from 'react-redux';
+import './App.css';
+import Home from './hom'; // Assuming 'hom' is intended to be 'home'
+import ButtonUsage from './toggleButton';
+import { store } from './store';
+
+const styles = {
+  container: {
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '2em',
+  },
+  content: {
+    width: '80%',
+    height: '80%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+};
 
 function App() {
-  // const [count, setCount] = useState(0)
-  const [color, setColor] = useState('lavender')
+  const [color, setColor] = useState('lavender');
 
-
-  return (<Provider store={store}>
-    <div style={{ width: "100%", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "2em", backgroundColor: color }}>
-      <div style={{ width: "80%", height: "80%", display: "flex", flexDirection: 'column', justifyContent: "center", alignItems: "center" }}>
-        <ButtonUsage color={color} setColor={setColor} />
-        <Home />
-
+  return (
+    <Provider store={store}>
+      <div style={{ ...styles.container, backgroundColor: color }}>
+        <div style={styles.content}>
+          <ButtonUsage color={color} setColor={setColor} />
+          <Home />
+        </div>
       </div>
-    </div>
-  </Provider>)
+    </Provider>
+  );
 }
 
-export default App
+export default App;

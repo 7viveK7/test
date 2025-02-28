@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -18,50 +18,79 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export default function CustomizedDialogs({setOpen,open,updateRowData,item}) {
-const [title,setTitle]=React.useState(item.title)
-const [body,setBody]=React.useState(item.body)
+export default function CustomizedDialogs({ setOpen, open, updateRowData, item }) {
+  const [title, setTitle] = React.useState(item?.title || '');
+  const [body, setBody] = React.useState(item?.body || '');
+
   
+  React.useEffect(() => {
+    setTitle(item?.title || '');
+    setBody(item?.body || '');
+  }, [item]);
+
   const handleClose = () => {
-    updateRowData({title,body})
+    updateRowData({ title, body });
     setOpen(false);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleClose();
+    }
+  };
+
   return (
-    <React.Fragment>
-      {/* <Button variant="outlined" onClick={handleClickOpen}>
-        Open dialog
-      </Button> */}
-      <BootstrapDialog
-        // onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
+    <BootstrapDialog
+      onClose={handleClose}
+      aria-labelledby="customized-dialog-title"
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        {item?.title ? 'Edit Item' : 'Create Item'}
+      </DialogTitle>
+      <IconButton
+        aria-label="close"
+        onClick={handleClose}
+        sx={{
+          position: 'absolute',
+          right: 8,
+          top: 8,
+          color: (theme) => theme.palette.grey[500],
+        }}
       >
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Modal title
-        </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          sx={(theme) => ({
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: theme.palette.grey[500],
-          })}
-        >
-          <CloseIcon />
-        </IconButton>
-        <DialogContent dividers>
-        <input type="text" placeholder="Enter Title" value={title} onChange={(e)=>setTitle(e.target.value)}/>
-        <input type="text" placeholder="Enter Body" value={body} onChange={(e)=>setBody(e.target.value)} />
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Save changes
-          </Button>
-        </DialogActions>
-      </BootstrapDialog>
-    </React.Fragment>
+        <CloseIcon />
+      </IconButton>
+      <DialogContent dividers>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Title"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <TextField
+          margin="dense"
+          label="Body"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Cancel</Button>
+        <Button variant="contained" onClick={handleClose}>
+          Save
+        </Button>
+      </DialogActions>
+    </BootstrapDialog>
   );
 }

@@ -1,47 +1,48 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 
-
-
-const initialState = {
-    data: [],
+// Define TypeScript interface for the data items if using TypeScript
+interface Item {
+  id: number;
+  title: string;
+  body: string;
+  [key: string]: any;
 }
 
+interface CounterState {
+  data: Item[];
+}
+
+const initialState: CounterState = {
+  data: [],
+};
+
 export const counterSlice = createSlice({
-    name: 'counter',
-    initialState,
-    reducers: {
-        setcurrentData: (state, action) => {
-            
-            // console.log({"dsf_":action.payload})
-            state.data = action.payload
-        },
+  name: 'counter',
+  initialState,
+  reducers: {
+    setcurrentData: (state, action: PayloadAction<Item[]>) => {
+      state.data = action.payload;
+    },
 
-        deleteData: (state, action: PayloadAction<number>) => {
-            state.data = state.data.filter((item, index) => item.id !== action.payload)
-        },
-        updateData: (state, action) => {
-            // console.log({"dsf":action.payload})
-            state.data = state.data.map((item, index) => {
-                if (item.id === action.payload.id) {
-                    return {...item, ...action.payload}
-                }
-                return item
-            })
-        },
-        sortingData: (state, action: PayloadAction<string>) => {
-            if (action.payload === 'asc') {
-                state.data = state.data.sort((a, b) => a.id - b.id)
-            } else {
-                state.data = state.data.sort((a, b) =>  b.id - a.id)
-            }
+    deleteData: (state, action: PayloadAction<number>) => {
+      state.data = state.data.filter((item) => item.id !== action.payload);
+    },
+
+    updateData: (state, action: PayloadAction<Item>) => {
+      state.data = state.data.map((item) =>
+        item.id === action.payload.id ? { ...item, ...action.payload } : item
+      );
+    },
+
+    sortingData: (state, action: PayloadAction<'asc' | 'desc'>) => {
+      state.data = [...state.data].sort((a, b) => 
+        action.payload === 'asc' ? a.id - b.id : b.id - a.id
+      );
+    },
+  },
+});
 
 
-        }
-    }
-})
-
-// Action creators are generated for each case reducer function
-export const { setcurrentData, deleteData, updateData, sortingData } = counterSlice.actions
-
-export default counterSlice.reducer
+export const { setcurrentData, deleteData, updateData, sortingData } = counterSlice.actions;
+export default counterSlice.reducer;
